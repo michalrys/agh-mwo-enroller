@@ -37,4 +37,12 @@ public class ParticipantService {
         connector.getSession().save(participant);
         transaction.commit();
     }
+
+    public void update(Participant participant) {
+        Transaction transaction = connector.getSession().beginTransaction();
+        Participant participantToUpdate = connector.getSession().get(Participant.class, participant.getLogin());
+        participantToUpdate.setPassword(participant.getPassword());
+        connector.getSession().update(participantToUpdate);
+        transaction.commit();
+    }
 }
