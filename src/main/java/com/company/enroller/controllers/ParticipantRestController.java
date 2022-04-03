@@ -50,23 +50,21 @@ public class ParticipantRestController {
 		public ResponseEntity<?> registerParticipant(@RequestBody Participant participant) {
 			String login = participant.getLogin();
 			Participant participantFound = participantService.findByLogin(login);
-			if (participantFound == null) {
-				participantService.add(participant);
-				return new ResponseEntity<Participant>(participant, HttpStatus.OK);
-			} else {
+			if (participantFound != null) {
 				return new ResponseEntity("Unable to create. A participant with login " + participant.getLogin() + " already exist.", HttpStatus.CONFLICT);
 			}
+			participantService.add(participant);
+			return new ResponseEntity<Participant>(participant, HttpStatus.OK);
 		}
 
 		// PUT http://localhost:8080/participants + json
 		@RequestMapping(value = "", method = RequestMethod.PUT)
 		public ResponseEntity<?> updateParticipant(@RequestBody Participant participant) {
 			Participant participantFound = participantService.findByLogin(participant.getLogin());
-			if (participantFound != null) {
-				participantService.update(participant);
-				return new ResponseEntity<Participant>(participant, HttpStatus.OK);
-			} else {
+			if (participantFound == null) {
 				return new ResponseEntity("Unable to update. Given participant " + participant.getLogin() + " does not exists.", HttpStatus.NOT_FOUND);
 			}
+			participantService.update(participant);
+			return new ResponseEntity<Participant>(participant, HttpStatus.OK);
 		}
 }
