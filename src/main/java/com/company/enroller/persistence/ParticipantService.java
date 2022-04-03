@@ -1,10 +1,8 @@
 package com.company.enroller.persistence;
 
 import java.util.Collection;
-
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Component;
-
 import com.company.enroller.model.Participant;
 
 @Component("participantService")
@@ -22,4 +20,7 @@ public class ParticipantService {
 		return query.list();
 	}
 
+	public Participant findByLogin(String login) {
+		return (Participant) connector.getSession().get(Participant.class, login);
+	}
 }
