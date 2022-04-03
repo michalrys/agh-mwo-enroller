@@ -43,6 +43,7 @@ public class ParticipantService {
         Participant participantToUpdate = connector.getSession().get(Participant.class, participant.getLogin());
         participantToUpdate.setPassword(participant.getPassword());
         connector.getSession().update(participantToUpdate);
+        //connector.getSession().merge(participantToUpdate);  alternative
         transaction.commit();
     }
 }

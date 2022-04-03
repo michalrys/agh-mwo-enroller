@@ -60,6 +60,7 @@ public class ParticipantRestController {
 		// PUT http://localhost:8080/participants + json
 		@RequestMapping(value = "", method = RequestMethod.PUT)
 		public ResponseEntity<?> updateParticipant(@RequestBody Participant participant) {
+			// this can be done : url/id --> merge
 			Participant participantFound = participantService.findByLogin(participant.getLogin());
 			if (participantFound == null) {
 				return new ResponseEntity("Unable to update. Given participant " + participant.getLogin() + " does not exists.", HttpStatus.NOT_FOUND);
