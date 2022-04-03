@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.company.enroller.model.Participant;
 import com.company.enroller.persistence.ParticipantService;
 
+// GET http://localhost:8080/participants
+
 @RestController
 @RequestMapping("/participants")
 public class ParticipantRestController {
