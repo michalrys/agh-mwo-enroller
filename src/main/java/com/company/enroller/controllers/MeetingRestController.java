@@ -43,7 +43,7 @@ public class MeetingRestController {
         return new ResponseEntity<>(meetings, HttpStatus.OK);
     }
 
-    //CREATE http://localhost:8080/meetings   +  json
+    //POST http://localhost:8080/meetings   +  json
     // assumption: title of meeting is unique
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createMeeting(@RequestBody Meeting meeting) {
@@ -61,5 +61,5 @@ public class MeetingRestController {
         return new ResponseEntity<>(meeting, HttpStatus.OK);
     }
 
-    //CREATE http://localhost:8080/meetings?addparticipant=user2
+    //POST http://localhost:8080/meetings?addparticipant=user2
 }
