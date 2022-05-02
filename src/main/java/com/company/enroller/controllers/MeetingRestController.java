@@ -52,9 +52,10 @@ public class MeetingRestController {
         if (meetingFoundById != null) {
             return new ResponseEntity<>("Unable to create. A meeting with id " + meetingId + " already exist.", HttpStatus.CONFLICT);
         }
-        Collection<Meeting> meetingsFoundByTitle = meetingService.findByTitle(meeting.getTitle());
+        String title = meeting.getTitle();
+        Collection<Meeting> meetingsFoundByTitle = meetingService.findByTitle(title);
         if (meetingsFoundByTitle != null) {
-            return new ResponseEntity<>("Unable to create. A meeting with title " + meeting.getTitle() + " already exist.", HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Unable to create. A meeting with title " + title + " already exist.", HttpStatus.CONFLICT);
         }
         meetingService.add(meeting);
         return new ResponseEntity<>(meeting, HttpStatus.OK);
