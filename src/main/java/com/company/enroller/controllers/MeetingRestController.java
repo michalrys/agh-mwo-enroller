@@ -33,6 +33,7 @@ public class MeetingRestController {
         return new ResponseEntity<>(meeting, HttpStatus.OK);
     }
 
+    //CREATE http://localhost:8080/meetings   +  json
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createMeeting(@RequestBody Meeting meeting) {
         long meetingId = meeting.getId();
