@@ -35,7 +35,6 @@ public class StartingPageController {
                         "<br><li><a href=\"https://michalrys-enroller.herokuapp.com/meetings\" target=new>GET: /meetings</a></li>" +
                         "<br><li><a href=\"https://michalrys-enroller.herokuapp.com/meetings/id=2\" target=new>GET: /meetings/id=2</a></li>" +
                         "<br><li><a href=\"https://michalrys-enroller.herokuapp.com/meetings/title=some title\" target=new>GET: /meetings/title=some title</a></li>" +
-                        "<br><li><a href=\"https://michalrys-enroller.herokuapp.com/meetings/meetingtitle=teleconference B&participantlogin=user2\" target=new>GET: /meetings/meetingtitle=teleconference B&participantlogin=user2</a></li>" +
                         "<br><li><a href=\"https://michalrys-enroller.herokuapp.com/meetings/participantsfrom/meetingid=2\" target=new>GET: /meetings/participantsfrom/meetingid=2</a></li>" +
                         "</ol>" +
                         "</body>\n" +
