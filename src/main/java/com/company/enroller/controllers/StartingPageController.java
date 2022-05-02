@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class StartingPageController {
 
     @RequestMapping(value = "")
-    public String mainPage() {
+    public String index() {
         return "index";
     }
 }
