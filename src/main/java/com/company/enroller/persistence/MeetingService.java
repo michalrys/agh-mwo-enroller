@@ -2,6 +2,7 @@ package com.company.enroller.persistence;
 
 import java.util.Collection;
 
+import com.company.enroller.model.Participant;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -30,5 +31,26 @@ public class MeetingService {
         }
         Session session = connector.getSession();
         return session.get(Meeting.class, Long.valueOf(meetingId));
+    }
+
+    public Collection<Meeting> findByTitle(String title) {
+        Session session = connector.getSession();
+        Query query = session.createQuery("FROM Meeting WHERE title='" + title + "'");
+        return query.list();
+    }
+
+    public void add(Meeting meeting) {
+        Session session = connector.getSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(meeting);
+        transaction.commit();
+    }
+
+    public void updateMeetingByAddingParticipant(Meeting meeting, Participant participant) {
+        Session session = connector.getSession();
+        Transaction transaction = session.beginTransaction();
+        meeting.addParticipant(participant);
+        session.update(meeting);
+        transaction.commit();
     }
 }
