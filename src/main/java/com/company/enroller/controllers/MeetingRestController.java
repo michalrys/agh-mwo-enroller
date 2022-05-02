@@ -45,6 +45,12 @@ public class MeetingRestController {
 
     //POST http://localhost:8080/meetings   +  json
     // assumption: title of meeting is unique
+    // example json:
+    //{
+    //    "title": "teleconference C",
+    //    "description": "some meeting C",
+    //    "date": "some other date"
+    //}
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createMeeting(@RequestBody Meeting meeting) {
         long meetingId = meeting.getId();
@@ -54,7 +60,7 @@ public class MeetingRestController {
         }
         String title = meeting.getTitle();
         Collection<Meeting> meetingsFoundByTitle = meetingService.findByTitle(title);
-        if (meetingsFoundByTitle != null) {
+        if (meetingsFoundByTitle.size() != 0) {
             return new ResponseEntity<>("Unable to create. A meeting with title " + title + " already exist.", HttpStatus.CONFLICT);
         }
         meetingService.add(meeting);
