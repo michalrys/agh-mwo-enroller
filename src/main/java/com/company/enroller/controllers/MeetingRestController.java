@@ -66,4 +66,16 @@ public class MeetingRestController {
         meetingService.add(meeting);
         return new ResponseEntity<>(meeting, HttpStatus.OK);
     }
+
+    // DELETE http://localhost:8080/meetings/id=2
+    @RequestMapping(value = "/id={id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteMeeting(@PathVariable String id) {
+        Meeting meetingById = meetingService.findById(id);
+        if (meetingById == null) {
+            return new ResponseEntity<>("No such meeting with given id. Nothing was done.", HttpStatus.NOT_FOUND);
+        }
+        String title = meetingById.getTitle();
+        meetingService.delete(meetingById);  //TODO: this is not working - fixme later
+        return new ResponseEntity<>("Following meeting was deleted - title: '" + title + "', id: '" + id + "'.", HttpStatus.OK);
+    }
 }

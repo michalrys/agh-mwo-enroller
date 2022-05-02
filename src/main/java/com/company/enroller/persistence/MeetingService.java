@@ -1,6 +1,7 @@
 package com.company.enroller.persistence;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.company.enroller.model.Participant;
 import org.hibernate.Session;
@@ -51,6 +52,19 @@ public class MeetingService {
         Transaction transaction = session.beginTransaction();
         meeting.addParticipant(participant);
         session.update(meeting);
+        transaction.commit();
+    }
+
+    public void delete(Meeting meeting) {
+        //TODO: it is not working - not deleting
+        Session session = connector.getSession();
+        Transaction transaction = session.getTransaction();
+        List allParticipants = session.createQuery("FROM Participant").list();
+        for (Object participant : allParticipants) {
+            meeting.removeParticipant(participant);
+        }
+        session.update(meeting);
+        session.delete(meeting);
         transaction.commit();
     }
 }
