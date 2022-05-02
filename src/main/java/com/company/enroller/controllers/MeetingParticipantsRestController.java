@@ -16,7 +16,7 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/meetings")
-public class MeetingParticipantsController {
+public class MeetingParticipantsRestController {
 
     @Autowired
     MeetingService meetingService;
@@ -64,7 +64,7 @@ public class MeetingParticipantsController {
                 meetingsSummary.append(" TITLE = ");
                 meetingsSummary.append(meeting.getTitle());
             }
-            return new ResponseEntity<>("There are more than one meeting with given title: '" + meetingTitle +"'. This operation was terminated. Summary:\n" + meetingsSummary.toString(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>("There are more than one meeting with given title: '" + meetingTitle + "'. This operation was terminated. Summary:\n" + meetingsSummary.toString(), HttpStatus.CONFLICT);
         }
         Meeting meeting = null;
         for (Meeting m : meetings) {
@@ -77,5 +77,16 @@ public class MeetingParticipantsController {
         }
         meetingService.updateMeetingByAddingParticipant(meeting, participantFound);
         return new ResponseEntity<>("Participant '" + participantLogin + "' was added to meeting '" + meeting.getTitle() + "'.", HttpStatus.OK);
+    }
+
+    // GET http://localhost:8080/meetings/participantsfrom/meetingid=2
+    @RequestMapping(value = "/participantsfrom/meetingid={id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getParticipantsFromMeeting(@PathVariable("id") String meetingId) {
+        Meeting meetingFoundById = meetingService.findById(meetingId);
+        if (meetingFoundById == null) {
+            return new ResponseEntity<>("Meeting with given id = '" + meetingId + "' was not found.", HttpStatus.NOT_FOUND);
+        }
+        Collection<Participant> participants = meetingFoundById.getParticipants();
+        return new ResponseEntity<>(participants, HttpStatus.OK);
     }
 }
