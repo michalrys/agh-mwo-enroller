@@ -89,4 +89,11 @@ public class MeetingParticipantsRestController {
         Collection<Participant> participants = meetingFoundById.getParticipants();
         return new ResponseEntity<>(participants, HttpStatus.OK);
     }
+
+    // GET http://localhost:8080/meetings/participantsfrom/meetingtitle=some title
+    @RequestMapping(value = "/participantsfrom/meetingtitle={title}", method = RequestMethod.GET)
+    public ResponseEntity<?> getParticipantsFromMeetingByTitle(@PathVariable("title") String meetingTitle) {
+        // TODO later
+        return null;
+    }
 }
