@@ -1,7 +1,9 @@
 package com.company.enroller.controllers;
 
 import com.company.enroller.model.Meeting;
+import com.company.enroller.model.Participant;
 import com.company.enroller.persistence.MeetingService;
+import com.company.enroller.persistence.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,9 @@ public class MeetingRestController {
 
     @Autowired
     MeetingService meetingService;
+
+    @Autowired
+    ParticipantService participantService;
 
     // GET http://localhost:8080/meetings
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -67,5 +72,23 @@ public class MeetingRestController {
         return new ResponseEntity<>(meeting, HttpStatus.OK);
     }
 
-    //POST http://localhost:8080/meetings?addparticipant=user2
+    //PUT http://localhost:8080/meetings/meetingid=2&participantlogin=user2
+    @RequestMapping(value = "/meetingid={id}&participantlogin={login}", method = RequestMethod.PUT)
+    public ResponseEntity<?> addParticipantToMeeting(@PathVariable("id") String meetingId,
+                                                     @PathVariable("login") String participantLogin) {
+        Participant participantFound = participantService.findByLogin(participantLogin);
+        if (participantFound == null) {
+            return new ResponseEntity<>("There is no such participant with login: " + participantLogin + ". This operation was terminated.", HttpStatus.NOT_FOUND);
+        }
+        Meeting meetingFoundById = meetingService.findById(meetingId);
+        if (meetingFoundById == null) {
+            return new ResponseEntity<>("There is no such meeting with id: '" + meetingId + "'. This operation was terminated.", HttpStatus.NOT_FOUND);
+        }
+        Collection<Participant> currentParticipants = meetingFoundById.getParticipants();
+        if (currentParticipants.contains(participantFound)) {
+            return new ResponseEntity<>("This participant is already added into the meeting. This operation was terminated.", HttpStatus.CONFLICT);
+        }
+        meetingService.updateMeetingByAddingParticipant(meetingFoundById, participantFound);
+        return new ResponseEntity<>("Participant '" + participantLogin + "' was added to meeting '" + meetingFoundById.getTitle() + "'.", HttpStatus.OK);
+    }
 }
