@@ -3,11 +3,10 @@ package com.company.enroller.controllers;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -17,6 +16,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -88,6 +88,27 @@ public class ParticipantRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.login", is(participant.getLogin())))
                 .andExpect(jsonPath("$.password", is(participant.getPassword())));
+    }
+
+    @Test
+    public void deleteParticipant() throws Exception {
+        Participant participant = new Participant();
+        String login = "testlogin";
+        participant.setLogin(login);
+        participant.setPassword("testpassword");
+
+        given(participantService.findByLogin(login)).willReturn(participant);
+//        given(participantService.delete(participant));
+
+        mvc.perform(delete("/participants/" + login).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.login", is(participant.getLogin())))
+                .andExpect(jsonPath("$.password", is(participant.getPassword())));
+
+        given(participantService.findByLogin(login)).willReturn(null);
+
+        mvc.perform(delete("/participants/" + login).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
 }
