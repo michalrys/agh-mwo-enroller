@@ -23,9 +23,9 @@ public class MeetingRestController {
         return new ResponseEntity<>(meetings, HttpStatus.OK);
     }
 
-    //GET http://localhost:8080/meetings/2
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getMeeting(@PathVariable("id") String id) {
+    //GET http://localhost:8080/meetings/id=2
+    @RequestMapping(value = "/id={id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getMeetingById(@PathVariable("id") String id) {
         Meeting meeting = meetingService.findById(id);
         if (meeting == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -33,15 +33,32 @@ public class MeetingRestController {
         return new ResponseEntity<>(meeting, HttpStatus.OK);
     }
 
+    //GET http://localhost:8080/meetings/title=some title
+    @RequestMapping(value = "/title={id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getMeetingByTitle(@PathVariable("id") String title) {
+        Collection<Meeting> meetings = meetingService.findByTitle(title);
+        if (meetings == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(meetings, HttpStatus.OK);
+    }
+
     //CREATE http://localhost:8080/meetings   +  json
+    // assumption: title of meeting is unique
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createMeeting(@RequestBody Meeting meeting) {
         long meetingId = meeting.getId();
-        Meeting meetingFound = meetingService.findById(String.valueOf(meetingId));
-        if (meetingFound != null) {
-            return new ResponseEntity<>("Unable to create. A participant with login " + meetingId + " already exist.", HttpStatus.CONFLICT);
+        Meeting meetingFoundById = meetingService.findById(String.valueOf(meetingId));
+        if (meetingFoundById != null) {
+            return new ResponseEntity<>("Unable to create. A meeting with id " + meetingId + " already exist.", HttpStatus.CONFLICT);
+        }
+        Collection<Meeting> meetingsFoundByTitle = meetingService.findByTitle(meeting.getTitle());
+        if (meetingsFoundByTitle != null) {
+            return new ResponseEntity<>("Unable to create. A meeting with title " + meeting.getTitle() + " already exist.", HttpStatus.CONFLICT);
         }
         meetingService.add(meeting);
         return new ResponseEntity<>(meeting, HttpStatus.OK);
     }
+
+    //CREATE http://localhost:8080/meetings?addparticipant=user2
 }

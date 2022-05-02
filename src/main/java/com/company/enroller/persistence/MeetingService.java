@@ -32,6 +32,12 @@ public class MeetingService {
         return session.get(Meeting.class, Long.valueOf(meetingId));
     }
 
+    public Collection<Meeting> findByTitle(String title) {
+        Session session = connector.getSession();
+        Query query = session.createQuery("FROM Meeting WHERE title='" + title + "'");
+        return query.list();
+    }
+
     public void add(Meeting meeting) {
         Session session = connector.getSession();
         Transaction transaction = session.beginTransaction();
