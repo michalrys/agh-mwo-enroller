@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -109,6 +110,28 @@ public class ParticipantRestControllerTest {
 
         mvc.perform(delete("/participants/" + login).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void updateParticipant() throws Exception {
+        Participant participant = new Participant();
+        String login = "testlogin";
+        String loginBad = "testloginBad";
+        participant.setLogin(login);
+        participant.setPassword("testpassword");
+        String inputJSON = "{\"login\":\"testlogin\", \"password\":\"testpassword\"}";
+        String inputJSONbad = "{\"login\":\"testloginBad\", \"password\":\"testpassword\"}";
+
+        BDDMockito.given(participantService.findByLogin(loginBad)).willReturn(null);
+
+        mvc.perform(put("/participants").content(inputJSONbad).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+        given(participantService.findByLogin(login)).willReturn(participant);
+        mvc.perform(put("/participants").content(inputJSON).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.login", is(login)))
+                .andExpect(jsonPath("$.password", is(participant.getPassword())));
     }
 
 }
