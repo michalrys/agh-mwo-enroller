@@ -31,6 +31,6 @@ public class StartingPageController {
                         "</body>\n" +
                         "</html>";
 
-        return "index";
+        return simpleInfo;
     }
 }
