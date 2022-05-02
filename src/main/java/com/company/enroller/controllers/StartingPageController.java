@@ -28,6 +28,16 @@ public class StartingPageController {
                         "    <br>Dodawanie uczestnika do spotkania\n" +
                         "    <br>Pobieranie uczestników spotkania" +
                         "<br><br><a href=\"https://github.com/michalrys/agh-mwo-enroller\" target=new>https://github.com/michalrys/agh-mwo-enroller</a>" +
+                        "<br><br>sprawdzenie - niektóre polecenia:" +
+                        "<ol>" +
+                        "<br><li><a href=\"https://michalrys-enroller.herokuapp.com/participants\" target=new>GET: /participants</a></li>" +
+                        "<br><li><a href=\"https://michalrys-enroller.herokuapp.com/participants/user2\" target=new>GET: /participants/user2</a></li>" +
+                        "<br><li><a href=\"https://michalrys-enroller.herokuapp.com/meetings\" target=new>GET: /meetings</a></li>" +
+                        "<br><li><a href=\"https://michalrys-enroller.herokuapp.com/meetings/id=2\" target=new>GET: /meetings/id=2</a></li>" +
+                        "<br><li><a href=\"https://michalrys-enroller.herokuapp.com/meetings/title=some title\" target=new>GET: /meetings/title=some title</a></li>" +
+                        "<br><li><a href=\"https://michalrys-enroller.herokuapp.com/meetings/meetingtitle=teleconference B&participantlogin=user2\" target=new>GET: /meetings/meetingtitle=teleconference B&participantlogin=user2</a></li>" +
+                        "<br><li><a href=\"https://michalrys-enroller.herokuapp.com/meetings/participantsfrom/meetingid=2\" target=new>GET: /meetings/participantsfrom/meetingid=2</a></li>" +
+                        "</ol>" +
                         "</body>\n" +
                         "</html>";
 
