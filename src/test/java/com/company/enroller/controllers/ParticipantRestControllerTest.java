@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.company.enroller.model.Participant;
 import com.company.enroller.persistence.MeetingService;
 import com.company.enroller.persistence.ParticipantService;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(ParticipantRestController.class)
@@ -52,7 +53,7 @@ public class ParticipantRestControllerTest {
         given(participantService.getAll()).willReturn(allParticipants);
 
         mvc.perform(get("/participants").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].login", is(participant.getLogin())));
     }
