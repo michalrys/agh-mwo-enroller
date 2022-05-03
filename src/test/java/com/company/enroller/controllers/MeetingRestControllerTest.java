@@ -3,30 +3,22 @@ package com.company.enroller.controllers;
 import com.company.enroller.model.Meeting;
 import com.company.enroller.persistence.MeetingService;
 import com.company.enroller.persistence.ParticipantService;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(MeetingRestController.class)
@@ -94,7 +86,9 @@ public class MeetingRestControllerTest {
         meeting.setTitle("meetingA");
         meeting.setDescription("important meeting");
         String inputJSON = "{\"id\":\"1\", \"title\":\"meetingA\", \"description\":\"important meeting\", \"date\":\"some date\"}";
+        List<Meeting> meetings = Collections.singletonList(meeting);
 
+        // 1 should create
         BDDMockito.given(meetingService.findByTitle(meeting.getTitle())).willReturn(new ArrayList<>());
         BDDMockito.given(meetingService.findById(String.valueOf(meeting.getId()))).willReturn(null);
 
@@ -106,7 +100,18 @@ public class MeetingRestControllerTest {
         BDDMockito.verify(meetingService).findByTitle(meeting.getTitle());
         BDDMockito.verify(meetingService).findById(String.valueOf(meeting.getId()));
 
+        // 2 should not create
+        BDDMockito.given(meetingService.findByTitle(meeting.getTitle())).willReturn(meetings);
+        BDDMockito.given(meetingService.findById(String.valueOf(meeting.getId()))).willReturn(null);
+
+        mvc.perform(MockMvcRequestBuilders.post("/meetings").content(inputJSON).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isConflict());
+
+        // 3 should not create
+        BDDMockito.given(meetingService.findByTitle(meeting.getTitle())).willReturn(new ArrayList<>());
+        BDDMockito.given(meetingService.findById(String.valueOf(meeting.getId()))).willReturn(meeting);
+
+        mvc.perform(MockMvcRequestBuilders.post("/meetings").content(inputJSON).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isConflict());
     }
-
-
 }
