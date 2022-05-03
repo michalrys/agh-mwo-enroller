@@ -8,6 +8,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -57,6 +58,32 @@ public class MeetingRestControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].date", Matchers.is(meeting.getDate())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].title", Matchers.is(meeting.getTitle())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].description", Matchers.is(meeting.getDescription())));
+    }
+
+    @Test
+    public void getMeetingByTitle() throws Exception {
+        Meeting meeting = new Meeting();
+        meeting.setId(1);
+        meeting.setDate("some date");
+        String titleWrong = "meetingANotExist";
+        String titleCorrect = "meetingA";
+        meeting.setTitle(titleCorrect);
+        meeting.setDescription("important meeting");
+        List<Meeting> meetingsWithTheSameTitle = Collections.singletonList(meeting);
+
+        BDDMockito.given(meetingService.findByTitle(titleWrong)).willReturn(null);
+        mvc.perform(MockMvcRequestBuilders.get("/meetings/title=" + titleWrong).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        BDDMockito.verify(meetingService).findByTitle(titleWrong);
+
+        BDDMockito.given(meetingService.findByTitle(titleCorrect)).willReturn(meetingsWithTheSameTitle);
+        mvc.perform(MockMvcRequestBuilders.get("/meetings/title=" + titleCorrect).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].date", Matchers.is(meeting.getDate())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title", Matchers.is(meeting.getTitle())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].description", Matchers.is(meeting.getDescription())));
+        BDDMockito.verify(meetingService).findByTitle(titleCorrect);
+
     }
 
 
