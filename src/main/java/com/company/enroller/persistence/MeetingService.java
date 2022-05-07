@@ -74,4 +74,18 @@ public class MeetingService {
         session.update(meetingToUpdate);
         transaction.commit();
     }
+
+    public void removeUser(Meeting meeting, Participant participant) {
+        Session session = connector.getSession();
+        Transaction transaction = session.getTransaction();
+        transaction.begin();
+        meeting.removeParticipant(participant);
+        session.update(meeting);
+        transaction.commit();
+    }
+
+    public boolean isOnMeeting(Participant participant, Meeting meeting) {
+        Collection<Participant> participants = meeting.getParticipants();
+        return participants.contains(participant);
+    }
 }

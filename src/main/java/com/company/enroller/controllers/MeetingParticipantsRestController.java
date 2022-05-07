@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/meetings")
@@ -95,5 +96,31 @@ public class MeetingParticipantsRestController {
     public ResponseEntity<?> getParticipantsFromMeetingByTitle(@PathVariable("title") String meetingTitle) {
         // TODO later
         return null;
+    }
+
+    // PUT http://localhost:8080/meetings/remove=user2&from=some title
+    @RequestMapping(value = "/remove={login}&from={title}", method = RequestMethod.PUT)
+    public ResponseEntity<?> removeParticipantFromMeeting(
+            @PathVariable("login") String participantLogin,
+            @PathVariable("title") String meetingTitle) {
+        Collection<Meeting> meetingsFound = meetingService.findByTitle(meetingTitle);
+        Participant participant = participantService.findByLogin(participantLogin);
+        if (meetingsFound.size() == 0) {
+            return new ResponseEntity<>("Meeting titled '" + meetingTitle + "' was not found. Nothing was done.", HttpStatus.NOT_FOUND);
+        }
+        if (participant == null) {
+            return new ResponseEntity<>("Participant with login '" + participantLogin + "' was not found. Nothing was done.", HttpStatus.NOT_FOUND);
+        }
+        if (meetingsFound.size() > 1) {
+            return new ResponseEntity<>("There are more than one meeting titled as '" + meetingTitle + "'. Use method calling meetgin id. Nothing was done.", HttpStatus.CONFLICT);
+        }
+        Optional<Meeting> firstFoundMeeting = meetingsFound.stream().findFirst();
+        Meeting meeting = firstFoundMeeting.get();
+        boolean isOnMeeting = meetingService.isOnMeeting(participant, meeting);
+        if (!isOnMeeting) {
+            return new ResponseEntity<>("There is no participant with login '" + participantLogin + "' on such meeting titled '" + meetingTitle + "'. Nothnig was done.", HttpStatus.NOT_FOUND);
+        }
+        meetingService.removeUser(meeting, participant);
+        return new ResponseEntity<>("Participant with login '" + participantLogin + "' was removed from meeting titled as '" + meetingTitle + "'.", HttpStatus.OK);
     }
 }
