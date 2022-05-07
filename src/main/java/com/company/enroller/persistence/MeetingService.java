@@ -53,4 +53,39 @@ public class MeetingService {
         session.update(meeting);
         transaction.commit();
     }
+
+    public void delete(Collection<Meeting> meetings) {
+        Session session = connector.getSession();
+        Transaction transaction = session.beginTransaction();
+        for (Meeting meeting : meetings) {
+            session.delete(meeting);
+        }
+        transaction.commit();
+    }
+
+    public void update(Meeting meetingToUpdate, Meeting meetingNewData) {
+        meetingToUpdate.setTitle(meetingNewData.getTitle());
+        meetingToUpdate.setDate(meetingNewData.getDate());
+        meetingToUpdate.setDescription(meetingNewData.getDescription());
+
+        Session session = connector.getSession();
+        Transaction transaction = session.getTransaction();
+        transaction.begin();
+        session.update(meetingToUpdate);
+        transaction.commit();
+    }
+
+    public void removeUser(Meeting meeting, Participant participant) {
+        Session session = connector.getSession();
+        Transaction transaction = session.getTransaction();
+        transaction.begin();
+        meeting.removeParticipant(participant);
+        session.update(meeting);
+        transaction.commit();
+    }
+
+    public boolean isOnMeeting(Participant participant, Meeting meeting) {
+        Collection<Participant> participants = meeting.getParticipants();
+        return participants.contains(participant);
+    }
 }
