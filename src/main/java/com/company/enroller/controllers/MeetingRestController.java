@@ -66,4 +66,14 @@ public class MeetingRestController {
         meetingService.add(meeting);
         return new ResponseEntity<>(meeting, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/title={id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteMeetingByTitle(@PathVariable("id") String meetingTitle) {
+        Collection<Meeting> meetingsFoundByTitle = meetingService.findByTitle(meetingTitle);
+        if (meetingsFoundByTitle.size() == 0) {
+            return new ResponseEntity<>("No such meeting titled as '" + meetingTitle + "'. Nothing was done", HttpStatus.NOT_FOUND);
+        }
+        meetingService.delete(meetingsFoundByTitle);
+        return new ResponseEntity<>("Meeting with title '" + meetingTitle + "' was deleted.", HttpStatus.OK);
+    }
 }

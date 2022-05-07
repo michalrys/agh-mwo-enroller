@@ -53,4 +53,13 @@ public class MeetingService {
         session.update(meeting);
         transaction.commit();
     }
+
+    public void delete(Collection<Meeting> meetings) {
+        Session session = connector.getSession();
+        Transaction transaction = session.beginTransaction();
+        for (Meeting meeting : meetings) {
+            session.delete(meeting);
+        }
+        transaction.commit();
+    }
 }
