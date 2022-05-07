@@ -62,4 +62,16 @@ public class MeetingService {
         }
         transaction.commit();
     }
+
+    public void update(Meeting meetingToUpdate, Meeting meetingNewData) {
+        meetingToUpdate.setTitle(meetingNewData.getTitle());
+        meetingToUpdate.setDate(meetingNewData.getDate());
+        meetingToUpdate.setDescription(meetingNewData.getDescription());
+
+        Session session = connector.getSession();
+        Transaction transaction = session.getTransaction();
+        transaction.begin();
+        session.update(meetingToUpdate);
+        transaction.commit();
+    }
 }

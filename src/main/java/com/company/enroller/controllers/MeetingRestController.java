@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/meetings")
@@ -71,9 +72,29 @@ public class MeetingRestController {
     public ResponseEntity<?> deleteMeetingByTitle(@PathVariable("id") String meetingTitle) {
         Collection<Meeting> meetingsFoundByTitle = meetingService.findByTitle(meetingTitle);
         if (meetingsFoundByTitle.size() == 0) {
-            return new ResponseEntity<>("No such meeting titled as '" + meetingTitle + "'. Nothing was done", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("No such meeting titled as '" + meetingTitle + "'. Nothing was done.", HttpStatus.NOT_FOUND);
         }
         meetingService.delete(meetingsFoundByTitle);
         return new ResponseEntity<>("Meeting with title '" + meetingTitle + "' was deleted.", HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/title={id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateMeetingByTitle(@PathVariable("id") String title, @RequestBody Meeting meetingWithNewData) {
+        Collection<Meeting> meetingsFoundByTitle = meetingService.findByTitle(title);
+        if (meetingsFoundByTitle.size() == 0) {
+            return new ResponseEntity<>("No such meeting titled as '" + title + "'. Nothing was done.", HttpStatus.NOT_FOUND);
+        } else if (meetingsFoundByTitle.size() > 1) {
+            StringBuilder info = new StringBuilder();
+            info.append("There are more than one meeting with the same title called '" + title + "'.");
+            info.append("\nFollowing meetings were found:\n");
+            for (Meeting m : meetingsFoundByTitle) {
+                info.append("\t-> id: " + m.getId() + "\n");
+            }
+            info.append("\n\nNothing was done. Update meeting by id not by title.");
+            return new ResponseEntity<>(info.toString(), HttpStatus.CONFLICT);
+        }
+        Optional<Meeting> meetingFirstFound = meetingsFoundByTitle.stream().findFirst();
+        meetingService.update(meetingFirstFound.get(), meetingWithNewData);
+        return new ResponseEntity<>("Meeting was updated.", HttpStatus.OK);
     }
 }
